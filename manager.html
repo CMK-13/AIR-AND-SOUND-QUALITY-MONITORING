@@ -1,0 +1,510 @@
+﻿<!doctype html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Manager</title>
+    <meta name="description" content="particles.js is a lightweight JavaScript library for creating particles.">
+    <meta name="author" content="Vincent Garreau" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" media="screen" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bruno Ace SC">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <!-- jQuery library -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="https://scontent.fhan18-1.fna.fbcdn.net/v/t1.15752-9/346142131_590295416543187_4775315210001490227_n.png?_nc_cat=103&ccb=1-7&_nc_sid=ae9488&_nc_ohc=JDvLqY5tjKsAX9lLV9X&_nc_ht=scontent.fhan18-1.fna&oh=03_AdSusRDuFRlAzuyivyJaPucEvvcqndyVB5RRDcfBnO8jfA&oe=648DA6D2">
+</head>
+<style type="text/css">
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .row {
+        height: 600px;
+    }
+
+    .head {
+        overflow: hidden;
+        background-image: linear-gradient(to right, #111827, #153657);
+    }
+
+        /* Style the topnav links */
+        .head a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+            /* Change color on hover */
+            .head a:hover {
+                ;
+                color: white;
+                border-inline-style: solid;
+                border-inline-color: #2ec866;
+                border-inline-width: 8px;
+            }
+
+    /* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
+    @media screen and (max-width: 400px) {
+        .head a {
+            float: none;
+            width: 100%;
+        }
+    }
+
+    #output {
+        max-width: 600px;
+        //font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        //color: red;
+        display: none;
+    }
+
+    #map {
+        width: 100%;
+        height: 790px;
+        margin-top: 2%;
+        margin-bottom: 2%;
+    }
+
+    #nhapip {
+        padding-top: 10px;
+    }
+
+    #tuychon {
+        background-image: url('https://cdn.pixabay.com/photo/2017/08/06/14/12/bokeh-lights-2592859_960_720.jpg');
+        background-repeat: round;
+        background-size: 100%;
+        height: 590px;
+    }
+
+    #txt {
+        text-align: right;
+        padding-top: 10px;
+        padding-right: 20px;
+        color: white;
+        font-size: 20px;
+        font-family: 'Bruno Ace SC', serif;
+    }
+
+    p {
+        font-size: 12px;
+        font-family: Arial, serif;
+    }
+
+    .overlay {
+        height: 0%;
+        width: 100%;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0, 0.9);
+        overflow-y: hidden;
+        transition: 0.5s;
+    }
+
+    .overlay-content {
+        position: relative;
+        top: 25%;
+        width: 100%;
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .overlay a {
+        padding: 8px;
+        text-decoration: none;
+        //font-size: 36px;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+    }
+
+        .overlay a:hover, .overlay a:focus {
+            color: #f1f1f1;
+        }
+
+    .overlay .closebtn {
+        position: absolute;
+        top: 20px;
+        right: 45px;
+        font-size: 60px;
+    }
+
+    @media screen and (max-height: 450px) {
+        .overlay {
+            overflow-y: auto;
+        }
+
+            .overlay a {
+                font-size: 20px
+            }
+
+            .overlay .closebtn {
+                font-size: 40px;
+                top: 15px;
+                right: 35px;
+            }
+    }
+</style>
+<body onload="openNav();  startTime(); initMap();">
+    <div id="myNav" class="overlay">
+
+        <div class="overlay-content">
+            <div id="login-form" style="display: none; font-family: Roboto">
+                <p style="text-align: center; color: white; font-size: 40px; font-family: Bruno Ace SC">Vui lòng nhập tài khoản đã được cung cấp:</p>
+                <br><br /><input type="text" id="username" placeholder="Tên đăng nhập" style="width: 30%; font-size: 18px; background-color: white"><br>
+                <input type="password" id="password" placeholder="Mật khẩu" style="width: 30%; font-size: 18px; background-color: white"><br><br />
+                <button id="submit-login" style="text-align:center" class="btn btn-secondary">Đăng nhập</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function openNav() {
+            document.getElementById("myNav").style.height = "100%";
+        }
+        const loginForm = document.getElementById('login-form');
+        const submitButton = document.getElementById('submit-login');
+        loginForm.style.display = 'block';
+
+
+        submitButton.addEventListener('click', function () {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Kiểm tra tài khoản và mật khẩu
+            if (username === 'ffteam' && password === '123456') {
+                // Chuyển tới web khác
+                document.getElementById("myNav").style.height = "0%";
+            } else {
+                alert('Tên đăng nhập hoặc mật khẩu không đúng.');
+            }
+        });
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCtazrAXqemDF2ogd-WW71YFYnbbsT3wE"></script>
+    <div class="head">
+        <a href="" role="button"><span class="material-symbols-outlined">home</span> Trang chủ</a>
+        <a href="" role="button"><span class="material-symbols-outlined">monitoring</span> Thống kê mức độ ô nhiễm không khí</a>
+        <a href="" role="button"><span class="material-symbols-outlined">monitoring</span> Thống kê mức độ ô nhiễm tiếng ồn</a>
+        <div id="txt"></div>
+
+        <script>
+            function startTime() {
+                const today = new Date();
+                let h = today.getHours();
+                let m = today.getMinutes();
+                let s = today.getSeconds();
+                m = checkTime(m);
+                s = checkTime(s);
+                document.getElementById('txt').innerHTML = h + ":" + m + ":" + s;
+                setTimeout(startTime, 1000);
+            }
+
+            function checkTime(i) {
+                if (i < 10) { i = "0" + i };  // add zero in front of numbers < 10
+                return i;
+            }
+        </script>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-8" style="background-color: #111827;">
+                <div id='map'>
+
+                </div>
+                <script>
+                    function initMap() {
+                        const gtvt = { lat: 21.028281, lng: 105.803529 };
+                        const nthg = { lat: 21.02306376147025, lng: 105.80560341904079 };
+                        const bku = { lat: 21.007302946290686, lng: 105.84252537284037 };
+                        const hnue = { lat: 21.037352545557276, lng: 105.78339300481437 };
+                        const imga = "https://icons.iconarchive.com/icons/icons-land/vista-map-markers/256/Map-Marker-Marker-Outside-Chartreuse-icon.png";
+                        var map = new google.maps.Map(document.getElementById('map'), {
+                            zoom: 13,
+                            center: { lat: 21.028281, lng: 105.803529 } //tọa độ trung tâm bản đồ
+                        });
+
+                        //dinh vi
+                        const infoWindow = new google.maps.InfoWindow();
+
+                        const locationButton = document.createElement("button");
+
+                        locationButton.textContent = "Pan to Current Location";
+                        locationButton.classList.add("custom-map-control-button");
+                        locationButton.style.backgroundColor = "#fff";
+                        locationButton.style.border = "2px solid #fff";
+                        locationButton.style.borderRadius = "3px";
+                        locationButton.style.boxShadow = "0 2px 6px rgba(0,0,0,.3)";
+                        locationButton.style.color = "rgb(25,25,25)";
+                        locationButton.style.cursor = "pointer";
+                        locationButton.style.fontFamily = "Roboto,Arial,sans-serif";
+                        locationButton.style.fontSize = "20px";
+                        locationButton.style.lineHeight = "38px";
+                        locationButton.style.padding = "0 8px";
+                        locationButton.style.marginRight = "-93%";
+                        locationButton.style.marginTop = "8%";
+                        locationButton.style.textAlign = "center";
+                        locationButton.textContent = "⛯";
+                        locationButton.title = "Click to recenter the map";
+                        locationButton.type = "button";
+                        map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
+                        locationButton.addEventListener("click", () => {
+                            // Lấy vị trí hiện tại của người dùng
+                            if (navigator.geolocation) {
+                                navigator.geolocation.getCurrentPosition(function (position) {
+                                    var pos = {
+                                        lat: position.coords.latitude,
+                                        lng: position.coords.longitude
+                                    };
+
+                                    // Đánh dấu vị trí hiện tại lên bản đồ
+                                    var marker = new google.maps.Marker({
+                                        position: pos,
+                                        map: map,
+                                        title: 'Vị trí của bạn'
+                                    });
+
+                                    // Di chuyển trung tâm bản đồ đến vị trí hiện tại của người dùng
+                                    map.setCenter(pos);
+                                }, function () {
+                                    handleLocationError(true, map.getCenter());
+                                });
+                            } else {
+                                // Trình duyệt không hỗ trợ định vị vị trí
+                                handleLocationError(false, map.getCenter());
+                            }
+                        });
+                        // Create the initial InfoWindow.
+                        let info = new google.maps.InfoWindow({
+                            content: "Click vào map để lấy tọa độ vị trí bất kì",
+                            position: { lat: 21.067431893185432, lng: 105.80787820191762 },
+                        });
+
+                        info.open(map);
+                        // Configure the click listener.
+                        map.addListener("click", (mapsMouseEvent) => {
+                            // Close the current InfoWindow.
+                            info.close();
+                            // Create a new InfoWindow.
+                            info = new google.maps.InfoWindow({
+                                position: mapsMouseEvent.latLng,
+                            });
+                            info.setContent(
+                                JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2)
+                            );
+                            info.open(map);
+                        });
+                        //tao marker
+                        const contentString = document.getElementById('output');
+                        const infowindow1 = new google.maps.InfoWindow({
+                            content: contentString,
+                            ariaLabel: "Uluru",
+                        });
+                        const marker1 = new google.maps.Marker({
+                            position: gtvt,
+                            map,
+                            title: "Uluru (Ayers Rock)",
+                            icon: {
+                                url: imga, // Đường dẫn đến nguồn ảnh là biến imga
+                                scaledSize: new google.maps.Size(50, 50), // Kích thước của icon
+                            }
+                        });
+
+                        marker1.addListener("click", () => {
+                            infowindow1.open({
+                                anchor: marker1,
+                                map,
+                            });
+                            var outputDiv = document.getElementById('output');
+                            outputDiv.style.display = 'block';
+                        });
+                        const contentString2 = '<h6 id="firstHeading" class="firstHeading">Đại học Ngoại Thương</h6>' + '<p>Tiếng ồn: Chưa có dữ liệu</p><br>' + '<p>Mức độ: Chưa có dữ liệu</p><br>' + '<p>Không khí: Chưa có dữ liệu</p><br>' + '<p>Mức độ: Chưa có dữ liệu</p>';
+                        const infowindow2 = new google.maps.InfoWindow({
+                            content: contentString2,
+                            ariaLabel: "Uluru",
+                        });
+                        const marker2 = new google.maps.Marker({
+                            position: nthg,
+                            map,
+                            title: "Uluru (Ayers Rock)",
+                            icon: {
+                                url: imga, // Đường dẫn đến nguồn ảnh là biến imga
+                                scaledSize: new google.maps.Size(50, 50), // Kích thước của icon
+                            }
+                        });
+
+                        marker2.addListener("click", () => {
+                            infowindow2.open({
+                                anchor: marker2,
+                                map,
+                            });
+                        });
+                        const contentString3 = '<h6 id="firstHeading" class="firstHeading">Đại học Bách KHoa Hà Nội</h6>' + '<p>Tiếng ồn: Chưa có dữ liệu</p><br>' + '<p>Mức độ: Chưa có dữ liệu</p><br>' + '<p>Không khí: Chưa có dữ liệu</p><br>' + '<p>Mức độ: Chưa có dữ liệu</p>';
+                        const infowindow3 = new google.maps.InfoWindow({
+                            content: contentString3,
+                            ariaLabel: "Uluru",
+                        });
+                        const marker3 = new google.maps.Marker({
+                            position: bku,
+                            map,
+                            title: "Uluru (Ayers Rock)",
+                            icon: {
+                                url: imga, // Đường dẫn đến nguồn ảnh là biến imga
+                                scaledSize: new google.maps.Size(50, 50), // Kích thước của icon
+                            }
+                        });
+
+                        marker3.addListener("click", () => {
+                            infowindow3.open({
+                                anchor: marker3,
+                                map,
+                            });
+                        });
+                        const contentString4 = '<h6 id="firstHeading" class="firstHeading">Đại học Sư Phạm Hà Nội</h6>' + '<p>Tiếng ồn: Chưa có dữ liệu</p><br>' + '<p>Mức độ: Chưa có dữ liệu</p><br>' + '<p>Không khí: Chưa có dữ liệu</p><br>' + '<p>Mức độ: Chưa có dữ liệu</p>';
+                        const infowindow4 = new google.maps.InfoWindow({
+                            content: contentString4,
+                            ariaLabel: "Uluru",
+                        });
+                        const marker4 = new google.maps.Marker({
+                            position: hnue,
+                            map,
+                            title: "Uluru (Ayers Rock)",
+                            icon: {
+                                url: imga, // Đường dẫn đến nguồn ảnh là biến imga
+                                scaledSize: new google.maps.Size(50, 50), // Kích thước của icon
+                            }
+                        });
+
+                        marker4.addListener("click", () => {
+                            infowindow4.open({
+                                anchor: marker4,
+                                map,
+                            });
+                        });
+                    }
+
+                    function handleLocationError(browserHasGeolocation, pos) {
+                        var infoWindow = new google.maps.InfoWindow({
+                            content: browserHasGeolocation ?
+                                'Không thể xác định vị trí hiện tại của bạn' :
+                                'Trình duyệt của bạn không hỗ trợ định vị vị trí'
+                        });
+                        var marker = new google.maps.Marker({
+                            position: pos,
+                            map: map,
+                            title: 'Vị trí của bạn'
+                        });
+                        infoWindow.open(map, marker);
+                    }
+
+
+                </script>
+            </div>
+            <div class="col-sm-4" style="background-color: #111827;">
+                <br /><a class="weatherwidget-io" href="https://forecast7.com/en/21d00105d82/hanoi/" data-label_1="HÀ NỘI" data-theme="original">HÀ NỘI</a>
+                <script>
+                    !function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = 'https://weatherwidget.io/js/widget.min.js'; fjs.parentNode.insertBefore(js, fjs); } }(document, 'script', 'weatherwidget-io-js');
+                </script>
+                <div id="output"><h6>Đại học giao thông vận tải</h6></div>
+                <div id="tuychon"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const sheetID = '1RzOs-Z1f2hzvTQPXEAwBvMChnmBgctvFOcbjbgt2A50';
+        const base = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?`;
+        const sheetName = 'Trang tính1';
+        const query1 = 'Select D,F ORDER BY G DESC LIMIT 1';
+        const query2 = 'Select C,E ORDER BY G DESC LIMIT 1';
+        const url1 = `${base}&sheet=${sheetName}&tq=${query1}`;
+        const url2 = `${base}&sheet=${sheetName}&tq=${query2}`;
+        const data = [];
+
+        document.addEventListener('DOMContentLoaded', init);
+        const output = document.querySelector('#output');
+
+        function init() {
+            console.log('ready');
+            Promise.all([fetch(url1), fetch(url2)])
+                .then(responses => Promise.all(responses.map(response => response.text())))
+                .then(reps => {
+                    reps.forEach(rep => {
+                        const jsData = JSON.parse(rep.substr(47).slice(0, -2));
+                        console.log(jsData);
+                        const colz = [];
+                        jsData.table.cols.forEach((heading) => {
+                            if (heading.label) {
+                                colz.push(heading.label.toLowerCase().replace(/\s/g, ''));
+                            }
+                        });
+                        jsData.table.rows.forEach((main) => {
+                            const row = {};
+                            colz.forEach((ele, ind) => {
+                                row[ele] = (main.c[ind] != null) ? main.c[ind].v : '';
+                            });
+                            data.push(row);
+                        });
+                    });
+                    maker(data);
+                })
+                .catch(console.error);
+        }
+        function maker(json) {
+            const container = document.createElement('div');
+
+            for (let i = 0; i < json.length; i++) {
+                const div = document.createElement('div');
+
+                // Tạo hai hàng khác nhau cho các cột D và G, C và F
+                const row1 = document.createElement('p');
+                const row2 = document.createElement('p');
+
+                // Lặp qua các key của object để hiển thị giá trị
+                Object.keys(json[i]).forEach(function (key) {
+                    const span = document.createElement('span');
+                    const value = JSON.stringify(json[i][key]).replace(/"/g, '');
+
+                    span.textContent = `${key.replace(/\s/g, '\xA0')}: ${value}`;
+
+                    // Kiểm tra key là D hoặc G thì hiển thị ở row1, ngược lại hiển thị ở row2
+                    if (key === 'D' || key === 'F') {
+                        row1.appendChild(span);
+                    } else {
+                        row2.appendChild(span);
+                    }
+                });
+
+
+                // Thêm hai hàng vào div
+                div.appendChild(row1);
+                div.appendChild(row2);
+
+                // Tạo một thẻ p mới
+                const p = document.createElement('p');
+
+                // Thêm nội dung vào thẻ p
+                p.innerHTML = div.innerHTML.replace(/<\/span><span/g, '</span><br><span');
+
+                // Thêm thẻ p vào container
+                container.appendChild(p);
+            }
+
+            output.appendChild(container);
+        }
+    </script>
+</body>
+
+</html>

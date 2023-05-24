@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Share your Google Sheets</title>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <meta name="description" content="particles.js is a lightweight JavaScript library for creating particles.">
+    <meta name="author" content="Vincent Garreau" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" media="screen" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bruno Ace SC">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <!-- jQuery library -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="https://scontent.fhan18-1.fna.fbcdn.net/v/t1.15752-9/346142131_590295416543187_4775315210001490227_n.png?_nc_cat=103&ccb=1-7&_nc_sid=ae9488&_nc_ohc=JDvLqY5tjKsAX9lLV9X&_nc_ht=scontent.fhan18-1.fna&oh=03_AdSusRDuFRlAzuyivyJaPucEvvcqndyVB5RRDcfBnO8jfA&oe=648DA6D2">
+
+    <style>
+        /* ---- reset ---- */
+        body {
+            margin: 0;
+            font: normal 75% Arial, Helvetica, sans-serif;
+        }
+
+        canvas {
+            display: block;
+            vertical-align: bottom;
+        }
+        /* ---- particles.js container ---- */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            //background-color: #b61924;
+            background-image: url("https://scontent-hkt1-1.xx.fbcdn.net/v/t1.15752-9/348383238_611463434265740_8121761842132359949_n.png?_nc_cat=110&ccb=1-7&_nc_sid=ae9488&_nc_ohc=-fpNQyntt_4AX_oU-Aa&_nc_ht=scontent-hkt1-1.xx&oh=03_AdS8M93YTJiwMvKn1dv3Udx6M4goCjxO3WEI1AIAZDrUTw&oe=64954A67");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 50% 50%;
+        }
+        /* ---- stats.js ---- */
+        .count-particles {
+            background: #000022;
+            position: absolute;
+            top: 48px;
+            left: 0;
+            width: 80px;
+            color: #13e8e9;
+            font-size: 0.8em;
+            text-align: left;
+            text-indent: 4px;
+            line-height: 14px;
+            padding-bottom: 2px;
+            font-family: Helvetica, Arial, sans-serif;
+            font-weight: bold;
+        }
+
+        .js-count-particles {
+            font-size: 1.1em;
+        }
+
+        #stats,
+        .count-particles {
+            -webkit-user-select: none;
+            margin-top: 5px;
+            margin-left: 5px;
+        }
+
+        #stats {
+            border-radius: 3px 3px 0 0;
+            overflow: hidden;
+        }
+
+        .count-particles {
+            border-radius: 0 0 3px 3px;
+        }
+        #thang {
+            position: fixed;
+            left: 0;
+            bottom: 50%;
+            
+            font-size: 200%;
+            text-align: center;
+            color: #ffffff;
+            height: 50px;
+            font-family: "Bruno Ace SC", serif;
+            animation: fade;
+            animation-delay: 2s;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+        }
+        .button {
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline;
+            cursor: pointer;
+            background-image: linear-gradient(to right, #00001a, #3d5c5c);
+        }
+
+        .button1 {
+            width: 45%;
+        }
+
+        .button {
+            -webkit-animation: button 2s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+            animation: button 2s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+        }
+
+        @-webkit-keyframes button {
+            0% {
+                letter-spacing: -0.5em;
+                -webkit-transform: translateZ(-700px);
+                transform: translateZ(-700px);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+
+            100% {
+                -webkit-transform: translateZ(0);
+                transform: translateZ(0);
+                opacity: 0.7;
+            }
+        }
+
+        
+        .overlay {
+            height: 0%;
+            width: 100%;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0, 0.9);
+            overflow-y: hidden;
+            transition: 0.5s;
+        }
+
+        .overlay-content {
+            position: relative;
+            top: 25%;
+            width: 100%;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .overlay a {
+            padding: 8px;
+            text-decoration: none;
+            //font-size: 36px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
+
+            .overlay a:hover, .overlay a:focus {
+                color: #f1f1f1;
+            }
+
+        .overlay .closebtn {
+            position: absolute;
+            top: 20px;
+            right: 45px;
+            font-size: 60px;
+        }
+
+        @media screen and (max-height: 450px) {
+            .overlay {
+                overflow-y: auto;
+            }
+
+                .overlay a {
+                    font-size: 20px
+                }
+
+                .overlay .closebtn {
+                    font-size: 40px;
+                    top: 15px;
+                    right: 35px;
+                }
+        }
+    </style>
+</head>
+<body">
+
+    <!-- particles.js container -->
+    <div id="particles-js"></div> <!-- stats - count particles -->
+    <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script> <!-- stats.js lib -->
+    <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 130, density: { enable: true, value_area: 800 } },
+                color: { value: "#ffffff" },
+                shape: {
+                    type: "circle",
+                    stroke: { width: 0, color: "#000000" },
+                    polygon: { nb_sides: 5 },
+                    image: { src: "img/github.svg", width: 100, height: 100 }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false,
+                    anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: { enable: false, speed: 40, size_min: 0.1, sync: false }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ffffff",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 6,
+                    direction: "none",
+                    random: false,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false,
+                    attract: { enable: false, rotateX: 600, rotateY: 1200 }
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { enable: true, mode: "repulse" },
+                    onclick: { enable: true, mode: "push" },
+                    resize: true
+                },
+                modes: {
+                    grab: { distance: 400, line_linked: { opacity: 1 } },
+                    bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 },
+                    repulse: { distance: 200, duration: 0.4 },
+                    push: { particles_nb: 4 },
+                    remove: { particles_nb: 2 }
+                }
+            },
+            retina_detect: true
+        });
+        var count_particles, stats, update;
+        stats = new Stats();
+        stats.setMode(0);
+        stats.domElement.style.position = "absolute";
+        stats.domElement.style.left = "0px";
+        stats.domElement.style.top = "0px";
+        document.body.appendChild(stats.domElement);
+        count_particles = document.querySelector(".js-count-particles");
+        update = function () {
+            stats.begin();
+            stats.end();
+            if (window.pJSDom[0].pJS.particles && window.pJSDom[0].pJS.particles.array) {
+                count_particles.innerText = window.pJSDom[0].pJS.particles.array.length;
+            }
+            requestAnimationFrame(update);
+        };
+        requestAnimationFrame(update);
+
+    </script>
+    <div id="thang">
+        <button class="button button1" onclick="openNav()">GET STARTED</button>
+    </div>
+    <div id="myNav" class="overlay">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <div class="overlay-content">
+            <p style="text-align: center; color: white; font-size: 40px; font-family: Bruno Ace SC">You are:</p>
+            <a href="https://quanlyiot.w3spaces.com/" style="color: white; font-size: 26px; border: 1px solid aquamarine; border-radius:4px; display: inline-block; width: 9.4%; margin: 0 auto; text-align: center ">User</a><br />
+            <br /><a href="https://giamsatiot.w3spaces.com/" style="color: white; font-size: 26px; border: 1px solid aquamarine; border-radius:4px; display: inline-block; width: 9.4%; margin: 0 auto; text-align: center ">Manager</a>
+        </div>
+    </div>
+    <script>
+        /* Open */
+        function openNav() {
+            document.getElementById("myNav").style.height = "100%";
+        }
+
+        /* Close */
+        function closeNav() {
+            document.getElementById("myNav").style.height = "0%";
+        }
+    </script>
+    </body>
+</html>

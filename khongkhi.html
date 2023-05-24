@@ -1,0 +1,265 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <meta name="description" content="particles.js is a lightweight JavaScript library for creating particles.">
+    <meta name="author" content="Vincent Garreau" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" media="screen" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bruno Ace SC">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <!-- jQuery library -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="https://scontent.fhan18-1.fna.fbcdn.net/v/t1.15752-9/346142131_590295416543187_4775315210001490227_n.png?_nc_cat=103&ccb=1-7&_nc_sid=ae9488&_nc_ohc=JDvLqY5tjKsAX9lLV9X&_nc_ht=scontent.fhan18-1.fna&oh=03_AdSusRDuFRlAzuyivyJaPucEvvcqndyVB5RRDcfBnO8jfA&oe=648DA6D2">
+
+</head>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .row {
+        height: 600px;
+    }
+
+    .head {
+        overflow: hidden;
+        background-image: linear-gradient(to right, #111827, #153657);
+    }
+
+        /* Style the topnav links */
+        .head a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+            /* Change color on hover */
+            .head a:hover {
+                ;
+                color: white;
+                border-inline-style: solid;
+                border-inline-color: #2ec866;
+                border-inline-width: 8px;
+            }
+
+    /* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
+    @media screen and (max-width: 400px) {
+        .head a {
+            float: none;
+            width: 100%;
+        }
+    }
+
+    #txt {
+        text-align: right;
+        padding-top: 10px;
+        padding-right: 20px;
+        color: white;
+        font-size: 20px;
+        font-family: 'Bruno Ace SC', serif;
+    }
+
+    #theogio {
+        background-color: #111827;
+        padding-top: 10px;
+    }
+
+    #theongay {
+        background-color: #111827;
+        padding-top: 10px;
+    }
+
+    #thang {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        color: white;
+        background-image: linear-gradient(to right, #00001a, #3d5c5c);
+    }
+
+        #thang p {
+            margin-bottom: 8px; /* Khoảng cách dưới của mỗi đoạn văn */
+        }
+</style>
+<body onload="startTime(); ">
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <div class="head">
+        <a href="" role="button"><span class="material-symbols-outlined">home</span> Trang chủ</a>
+        <a href="" role="button"><span class="material-symbols-outlined">monitoring</span> Thống kê mức độ ô nhiễm không khí</a>
+        <a href="" role="button"><span class="material-symbols-outlined">monitoring</span> Thống kê mức độ ô nhiễm tiếng ồn</a>
+        <div id="txt"></div>
+
+        <script>
+            function startTime() {
+                const today = new Date();
+                let h = today.getHours();
+                let m = today.getMinutes();
+                let s = today.getSeconds();
+                m = checkTime(m);
+                s = checkTime(s);
+                document.getElementById('txt').innerHTML = h + ":" + m + ":" + s;
+                setTimeout(startTime, 1000);
+            }
+
+            function checkTime(i) {
+                if (i < 10) { i = "0" + i };  // add zero in front of numbers < 10
+                return i;
+            }
+        </script>
+    </div>
+    <div class="row">
+        <div class="col-sm-6" id="theogio">
+            <div id="bytime" style="height: 400px;"></div>
+            <script>
+                google.charts.load('current', { packages: ['corechart'] });
+                google.charts.setOnLoadCallback(drawChart);
+
+                function drawChart() {
+                    var sheetID = '1RzOs-Z1f2hzvTQPXEAwBvMChnmBgctvFOcbjbgt2A50'; // Thay YOUR_SHEET_ID bằng ID của tệp Sheet của bạn.
+                    var query = new google.visualization.Query('https://docs.google.com/spreadsheets/d/' + sheetID + '/gviz/tq?tqx=out:json');
+                    query.send(handleQueryResponse);
+                }
+
+                function handleQueryResponse(response) {
+                    var dataTable = response.getDataTable();
+
+                    var numRows = dataTable.getNumberOfRows();
+                    var data = new google.visualization.DataTable();
+                    data.addColumn('timeofday', 'Time');
+                    data.addColumn('number', 'Value 1');
+                    data.addColumn('number', 'Value 2');
+
+                    for (var i = 0; i < numRows; i++) {
+                        var timeString = dataTable.getValue(i, 1); // Lấy giá trị thời gian từ cột 2 (chỉ số là 1) của bảng
+                        var timeParts = timeString.split(':');
+                        var hour = parseInt(timeParts[0]);
+                        var minute = parseInt(timeParts[1]);
+                        var second = parseInt(timeParts[2]);
+
+                        var time = [hour, minute, second];
+                        var value1 = dataTable.getValue(i, 2); // Lấy giá trị từ cột 3 (chỉ số là 2) của bảng
+                        var value2 = dataTable.getValue(i, 3); // Lấy giá trị từ cột 4 (chỉ số là 3) của bảng
+
+                        data.addRow([time, value1, value2]);
+                    }
+                    // Lấy danh sách các khoảng giờ từ dữ liệu
+                    var hourRanges = [];
+                    for (var i = 0; i < numRows; i++) {
+                        var dateTime = new Date(dataTable.getValue(i, 1));
+                        var hour = dateTime.getHours();
+                        var startHour = Math.floor(hour / 2) * 2; // Lấy giờ bắt đầu của khoảng giờ
+                        var endHour = startHour + 2; // Lấy giờ kết thúc của khoảng giờ
+                        var hourRange = formatHour(startHour) + '-' + formatHour(endHour);
+                        if (!hourRanges.includes(hourRange)) {
+                            hourRanges.push(hourRange);
+                        }
+                    }
+
+                    var options = {
+                        title: 'Mức độ ô nhiễm không khí theo các giờ',
+                        hAxis: {
+                            title: 'Time',
+                            ticks: hourRanges,
+                            format: 'HH:mm' // Định dạng hiển thị giờ
+                        },
+                        vAxis: {
+                            title: 'Value',
+                            minValue: 0,
+                            maxValue: 400
+                        },
+                        legend: { position: 'top', maxLines: 3 },
+                        series: {
+                            //0: { color: 'red', lineWidth: 2, pointSize: 5 },
+                            1: { color: 'blue', lineWidth: 2, pointSize: 5 }
+                        }
+                    };
+
+                    var chart = new google.visualization.LineChart(document.getElementById('bytime'));
+
+                    var view = new google.visualization.DataView(dataTable);
+                    view.setColumns([1, 3]);
+                    chart.draw(view, options);
+                }
+
+                // Hàm định dạng giờ
+                function formatHour(hour) {
+                    return hour.toString().padStart(2, '0') + ':00';
+                }
+            </script>
+        </div>
+        <div class="col-sm-6" id="theongay">
+            <div id="bydate" style="height:400px;"></div>
+            <script>
+                google.charts.load('current', { packages: ['corechart'] });
+                google.charts.setOnLoadCallback(drawChart1);
+
+                function drawChart1() {
+                    var sheetID = '1RzOs-Z1f2hzvTQPXEAwBvMChnmBgctvFOcbjbgt2A50'; // Thay YOUR_SHEET_ID bằng ID của tệp Sheet của bạn.
+                    var query = new google.visualization.Query('https://docs.google.com/spreadsheets/d/' + sheetID + '/gviz/tq?tqx=out:json');
+                    query.send(handleQueryResponse1);
+                }
+
+                function handleQueryResponse1(response) {
+                    var dataTable = response.getDataTable();
+
+                    // Lấy giá trị ô đầu tiên trong cột 1 (chỉ số cột là 0) của bảng
+                    var firstDate = dataTable.getValue(0, 0);
+                    // Chuyển đổi chuỗi ngày thành đối tượng ngày
+                    var startDate = new Date(firstDate);
+                    var numRows = dataTable.getNumberOfRows();
+                    var lastDate = dataTable.getValue(numRows - 1, 0);
+                    var endDate = new Date(lastDate);
+                    var options = {
+                        title: 'Mức độ ô nhiễm không khí theo các ngày',
+                        hAxis: {
+                            title: 'Date',
+                            minValue: startDate, // Sử dụng ngày đầu tiên của bảng làm giá trị minValue
+                            maxValue: endDate
+                        },
+                        vAxis: {
+                            title: 'Value',
+                            minValue: 0,
+                            maxValue: 400
+                        },
+                        legend: { position: 'top', maxLines: 3 },
+                        series: {
+                            //0: { color: 'red', lineWidth: 2, pointSize: 5 },
+                            1: { color: 'blue', lineWidth: 2, pointSize: 5 }
+                        }
+                    };
+
+                    var chart = new google.visualization.LineChart(document.getElementById('bydate'));
+
+                    var view = new google.visualization.DataView(dataTable);
+                    view.setColumns([0, 3]);
+                    chart.draw(view, options);
+                }
+
+            </script>
+        </div>
+    </div>
+    <div id="thang">
+        Thang đo mức độ ô nhiễm không khí
+        <p>1. 0-100: Mức độ ô nhiễm ở mức tốt, không(ít) gây hại</p>
+        <p>2. 100-200: Mức độ ô nhiễm ở mức khá, có nguy cơ gây hại</p>
+        <p>3. >200: Mức độ ô nhiễm ở mức tệ, rất hại tới sức khỏe</p>
+    </div>
+</body>
+</html>
