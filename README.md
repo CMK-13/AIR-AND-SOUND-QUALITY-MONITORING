@@ -9,3 +9,8 @@
 ![alt](https://github.com/CMK-13/AIR-AND-SOUND-QUALITY-MONITORING/blob/main/User%20or%20manager.png) 
 # USER :
 ![alt](https://github.com/CMK-13/AIR-AND-SOUND-QUALITY-MONITORING/blob/main/User.png) 
+# Manager :
+![alt](https://github.com/CMK-13/AIR-AND-SOUND-QUALITY-MONITORING/blob/main/password.png) 
+![alt](https://github.com/CMK-13/AIR-AND-SOUND-QUALITY-MONITORING/blob/main/manager.png) 
+# THỐNG KÊ DỮ LIỆU :
+![alt](https://github.com/CMK-13/AIR-AND-SOUND-QUALITY-MONITORING/blob/main/Th%E1%BB%91ng%20k%C3%AA%20d%E1%BB%AF%20li%E1%BB%87u.png) 
